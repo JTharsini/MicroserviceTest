@@ -198,3 +198,17 @@ will be used to consume it
 -Resilience ways:
 --One service goes down: run multiple instances
 --A microservice instance is slow: If external service is slow dependent services are also slow. But unrelated service can also become slow. Why? Threads
+When a request comes to a webserver, it creates a thread and executing the request. Once the response is given, thread goes away. Another request => another thread
+When a thread is in-progress, another request comes in, another thread is created.
+If request comes faster than the actual handling of a request, more and more threads will be in progress at the same time.
+==> resources are consumed. maximum number of threads are not configured, system crashes.
+initial solution: using Timeout
+Temporary solution: Increase size of tomcat thread pool
+-When something slow user refreshes ==> more request at once ==> tend to fail quickly
+-Setting timeout (Any service which calls another service can set timeout): In our case, movie-info-service, movie-catalog-service
+1. set timeout using RestTemplate : requests which use this RestTemplate will use that timeout
+HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+    httpComponentsClientHttpRequestFactory.setConnectTimeout(3000);// in milliseconds
+    return new RestTemplate(httpComponentsClientHttpRequestFactory);
+Problem: even though timeout, thread still exists in the webserver. How?
+request rate: 1 request/second, but timeout: 3 second, even though thread is cleared eventually after timeout, it will stay until the timeout. for other case it solves the problem
