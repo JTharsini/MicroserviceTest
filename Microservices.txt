@@ -86,6 +86,9 @@ Solution: top level node is object and list is one of the fields. Adding new fie
 	Advantage: less hops
 -Spring cloud uses client side service discovery
 -Spring cache service URL for particular amount of duration
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+Service discovery for RestTemplate:
 -Eureka (open source): commonly used service discovery technology in Spring cloud (Netflix created that)
 -Other libraries by Netflix (Eureka, Ribbon, Hysterix, Zuul)
 -Spring provides great abstraction with layers
@@ -161,4 +164,5 @@ UserRating rating =
       builder.build().get().uri("http://ratings-data-service/ratings/users/" + userId).retrieve().bodyToMono(UserRating.class)
         .block();
 (localhost:8082 ==> ratings-data-service)
--
+
+----------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,13 +1,7 @@
 package io.javabrains.moviecatalogservice.resources;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-
 import io.javabrains.moviecatalogservice.models.CatalogItem;
 import io.javabrains.moviecatalogservice.models.Movie;
-import io.javabrains.moviecatalogservice.models.Rating;
 import io.javabrains.moviecatalogservice.models.UserRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/catalogs")
@@ -28,8 +26,8 @@ public class MovieCatalogResource
   @RequestMapping("/{userId}")
   public List<CatalogItem> getCatalog(@PathVariable("userId") String userId)
   {
-    List<Rating> ratings = asList(new Rating("1", 4), new Rating("2", 5));
-    return ratings.stream().map(rating -> {
+    UserRating userRating = restTemplate.getForObject("http://ratings-data-service/ratings/users/" + userId, UserRating.class);
+    return userRating.getRatings().stream().map(rating -> {
       // this call is synchronous. wait until the rest template gives the output
       Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
       assert movie != null;
