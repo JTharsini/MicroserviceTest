@@ -1,0 +1,164 @@
+-Microservices: advantage: complexity is not in application, between services
+-When microservices are in use functionalities are buried into services, all the other problems are common to all application
+-When problems are common ==> there are common patterns ==> frameworks ==> technology trends
+-Difference between microservices vs webservices: 
+	O webservices are created as utility services. Create a service and publish it. While doing that creator doesn't know in which places
+	it will be used (IP Location finder)
+	
+	O on the otherhand, microservices are created for a known purpose. This service will serve this part of the application. Will be only used
+	by this application & that's okay. Still it can be reused. But it's not a requirement. It's not designed for that.
+-Services in Service Oriented architectures deal with data, no UI. in microservices UI is also
+a microservice
+-mymoviecatalog.com/api/koushik
+{
+	id: Koushik
+	name: Koushik K3
+	movies: [
+		{id:1234, name:"J", desc:"...", rating:3},
+		{id:500, name:"J2", desc:"...", rating:5},
+	]
+}
+-
+MovieInfoService -> ()																	RatingsDataService -> ()
+	Input: MovieID																			Input: UserID
+	Output: Movie details																	Output: MovieID and ratings
+		|																						|
+		|																						|
+		|																						|
+		|																						|
+		-------------------------------> MovieCatalogService -> () <-----------------------------
+											Input: UserID
+											Output: Movie list with details
+													|
+													|
+													|
+													|
+													V
+													
+==> Create 3 springboot projects
+-Build MovieCatalogService API
+-Build MovieInfoService API
+-Build RatingsDataService API
+-Have MovieCatalogService call the other two services (the naive way)
+-Implement a better way (Service discovery)
+		                                
+-Is it possible to have the end client directly call the individual microservices and collate the data on the client side? Yes. But having
+multiple clients, need to do the same thing again and again.
+-How to create springboot application?
+		-Using Maven and adding required dependencies
+		-Using Spring CLI
+		-Using start.spring.io
+-Once all three APIs are done with hardcoded values, need to make MovieCatalogService to call other services. How?
+programmatically, using a REST client library, SpringBoot comes with a client in classpath - RestTemplate (Deprecated) or WebClient (needs reactive programming and reactive programming dependencies)
+-In Java, to unmarshall streams to Object, the class should have an empty constructor
+-This call is synchronous. wait until the rest template gives the output
+Movie movie = restTemplate.getForObject("http://localhost:8080/movies/" + rating.getMovieId(), Movie.class);
+-In asynchronous pgm, no need to wait for output. Instead provide a lamda so that once the result is available it can execute the lamda
+<!-- This is needed for WebClient, asynchronous reactive programming-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+-since http method is get, after builder.build() get
+ bodyToMono - Mono means this will be returned at some point. not immediately
+ but here no way. need to wait until result come. then block()
+      Movie movie = builder.build().get().uri("http://localhost:8080/movies/" + rating.getMovieId()).retrieve()
+        .bodyToMono(Movie.class).block();
+-Problem with API having list as root node/top level node (return type) : 
+if need to add extra field problem
+Eg: list of ratings for a user is returned. If need to send username for those ratings, fail. If it's an object, adding new field doesn't
+affect
+In REST client side, need to give return type. List is generics. need to use ParameterizedType. ugly.
+Solution: top level node is object and list is one of the fields. Adding new field gives backward compatibility.
+-RestTemplate is threadsafe. one will not affect another.
+-Security in microservice communication:
+	-HTTPS
+	-Authenticated RestTemplate calls (Authentication information will be sent through headers)
+-Why hardcoding URLs are bad?
+	-Changes require code updates
+	-Cloud deployment gives dynamic URLs ==> need to support that.
+	-Load balancing (some microservices need more bots ==> more URLs ==> which one to hardcode?)
+	-Multiple environments (Development, QA, Production ==> need to change everytimes)
+-To overcome hardcoding URLs' problem ==> Service discovery
+-Client side service discovery: clients ask "give me the URL of service 2", discovery service gives URL, using URL client communicate
+	Disadvantage: too much hops
+-Server side service discovery: client ask "pass this message to service 2", not like discovery though
+	Advantage: less hops
+-Spring cloud uses client side service discovery
+-Spring cache service URL for particular amount of duration
+-Eureka (open source): commonly used service discovery technology in Spring cloud (Netflix created that)
+-Other libraries by Netflix (Eureka, Ribbon, Hysterix, Zuul)
+-Spring provides great abstraction with layers
+-To discover, 
+	-need to start Eureka server
+	-each services register and act as Eureka client (Tell about its availability by registering (publish), It can ask Eureka server for another 
+	service (locate))
+-create Eureka server is creating another SpringBoot application
+-Eureka server dependency : for Eureka server
+-Eureka discovery dependency : for Eureka client
+-@EnableEurekaServer // This annotation is required in addition to @SpringBootApplication to enable server discovery
+public class DiscoveryServerApplication{}
+-If Java version is > 9, errors are shown. Because Jaxb is deprecated from Java 9. Need to explicitly add Jaxb dependencies
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+-starting with "Started Eureka Server"
+-http://localhost:8761/
+Instances currently registered with Eureka: empty. because no microservices are registered. because they don't have Eureka client
+-server.port=8761 is default for Eureka server
+-Following properties are needed to be added to application.properties avoid Eureka registered to itself. There is only one Eureka server.
+No need to look for other Eureka servers
+		eureka.client.register-with-eureka=false
+		eureka.client.fetch-registry=false
+-Why Eureka servers are trying to register to itself?
+Eureka servers are Eureka clients as well. By being so they can be registered among themselves when there are multiple Eureka servers.
+-Why multiple Eureka server? If one server fails, other servers will be available
+-If not those properties added, there will be errors. still it works
+-Make microservices as Eureka clients: (while creating, can add Eureka discovery client also in addition to web dependency)
+	-Add dependency
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+	
+	-Add properties
+			<properties>
+				<spring-cloud.version>2021.0.3</spring-cloud.version>
+			</properties>
+			
+	-Add @EnableEurekaClient annotation // not mandatory in new versions
+	-Add spring.application.name
+-If using Eureka server in different server or port, need to specify that in application.properties
+-Consuming microservice : Ask library with service name. That library will call service discovery, get the URL and use it. usage is just like client 
+side service discovery. But underneath library behaves as server side service discovery. Therefore reduced hops compare to typical client side 
+service discovery.
+with @LoadBalanced annotation in RestTemplate bean
+-@LoadBalanced annotation does service discovery in load balanced way. It tells RestTemplate not to go to the URL directly. Go to service discovery
+first & use that
+-Eureka only knows names of the microservices it's registered with
+-UserRating rating =
+      builder.build().get().uri("http://localhost:8082/ratings/users/" + userId).retrieve().bodyToMono(UserRating.class)
+        .block();
+should be replaced with
+UserRating rating =
+      builder.build().get().uri("http://ratings-data-service/ratings/users/" + userId).retrieve().bodyToMono(UserRating.class)
+        .block();
+(localhost:8082 ==> ratings-data-service)
+-
