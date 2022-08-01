@@ -164,5 +164,27 @@ UserRating rating =
       builder.build().get().uri("http://ratings-data-service/ratings/users/" + userId).retrieve().bodyToMono(UserRating.class)
         .block();
 (localhost:8082 ==> ratings-data-service)
-
+-If no service or service name wrong: No instance available error
+-application name changed: need to rebuild
+-service name, payload should not be changed once deployed to avoid rebuild
+-Can all services be fetched at once runtime? yes
+-Once eureka-client gets the information once, it will not call again and again. It has caches
+-When the following command get executed, it executes the main method in the jar with default application properties
+java -jar movie-info-service.jar
+-It allows to change the properties runtime:
+D:\Tharsini\MicroserviceTest\movie-info-service\target
+java -Dserver.port=8201 -jar movie-info-service.jar
+Another service with different port: in Eureka service registered
+Load balancing is happening in client side. Not effective
+100 instances. don't have communication between themselves
+-Want to have advanced load balancing?
+Autowired DiscoveryClient and getInstances() and loop through
+-Fault tolerance:
+Eureka client sends heartbeats to service discovery to say "I am still alive"
+If discovery service could not get it for a while then assume it's dead
+-When discovery service goes down, client picks from cache
 ----------------------------------------------------------------------------------------------------------------------------------------------
+-fault tolerance: In an application if there is a fault, how much tolerance does the system have
+-Resilience: how many errors system tolerate before going down.
+Whether it has a mechanism to fix the problem and come alive
+-
