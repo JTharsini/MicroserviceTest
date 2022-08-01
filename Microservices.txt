@@ -187,4 +187,14 @@ If discovery service could not get it for a while then assume it's dead
 -fault tolerance: In an application if there is a fault, how much tolerance does the system have
 -Resilience: how many errors system tolerate before going down.
 Whether it has a mechanism to fix the problem and come alive
--
+-movie-info-service can be external service
+-more external service ==> more failures
+-https://www.themoviedb.org/ provides API
+-Create account there. When account is created API key can be requested. That API key
+will be used to consume it
+-Configured value from application.properties file can be read to application with @Value annotation and property key name
+ @Value("${api.key}")
+ private String apiKey;
+-Resilience ways:
+--One service goes down: run multiple instances
+--A microservice instance is slow: If external service is slow dependent services are also slow. But unrelated service can also become slow. Why? Threads
