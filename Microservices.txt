@@ -212,3 +212,9 @@ HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = 
     return new RestTemplate(httpComponentsClientHttpRequestFactory);
 Problem: even though timeout, thread still exists in the webserver. How?
 request rate: 1 request/second, but timeout: 3 second, even though thread is cleared eventually after timeout, it will stay until the timeout. for other case it solves the problem
+Solution:
+-movie-catalog-service can be smart and rather sending request movie-info-service while it's slow, act smarter:
+see who is slow, hold request for a while without sending
+==> circuit breaker pattern (drip switch when a fault, after sorted manual or auto on)
+Technically can be applied to a service which calls another service
+ 
