@@ -262,5 +262,5 @@ Hysterix wraps your class in a proxy class. proxy class contains circuit breaker
 ==> more granularity in fallback mechanism
 -With separate @HysterixCommand fallback which sits inside the class itself, not get executed due to proxy class. It's a wrapper for the instance of an API class.
 No way to tell to call fallback. If external class calls it will do
-Solution: put fallbacks in separate class
+Solution: put method which uses fallback and the fallback in a class
 
