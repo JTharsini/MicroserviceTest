@@ -254,5 +254,13 @@ do this : Hysterix
 	-Add @EnableCircuitBreaker annotation to the application class
 	-Add @HysterixCommand annotation to methods that need circuit breaker
 	-Configure Hysterix behavior (parameters)
-
+-When no parameters provides Hysterix executes fallback or when one consuming service down it does the same
+-How does it work?
+just like anything works in Spring (Proxy)
+Hysterix wraps your class in a proxy class. proxy class contains circuit breaker logic.
+-In our case, ratings might return correct data. but we return whole fallback rather considering that partial result. What if we want to have separate fallback?
+==> more granularity in fallback mechanism
+-With separate @HysterixCommand fallback which sits inside the class itself, not get executed due to proxy class. It's a wrapper for the instance of an API class.
+No way to tell to call fallback. If external class calls it will do
+Solution: put fallbacks in separate class
 

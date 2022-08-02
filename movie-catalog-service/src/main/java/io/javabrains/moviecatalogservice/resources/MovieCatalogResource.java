@@ -3,6 +3,7 @@ package io.javabrains.moviecatalogservice.resources;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.javabrains.moviecatalogservice.models.CatalogItem;
 import io.javabrains.moviecatalogservice.models.Movie;
+import io.javabrains.moviecatalogservice.models.Rating;
 import io.javabrains.moviecatalogservice.models.UserRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,16 +28,24 @@ public class MovieCatalogResource
   private WebClient.Builder builder;
 
   @RequestMapping("/{userId}")
-  @HystrixCommand(fallbackMethod = "getFallbackCatalog")
   public List<CatalogItem> getCatalog(@PathVariable("userId") String userId)
   {
+    UserRating userRating = getUserRating(userId);
+    // this call is synchronous. wait until the rest template gives the output
+    return userRating.getRatings().stream().map(this::getCatalogItem).collect(toList());
+  }
+
+  @HystrixCommand(fallbackMethod = "getFallbackCatalogItem")
+  private CatalogItem getCatalogItem(Rating rating) {
+    Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
+    assert movie != null;
+    return new CatalogItem(movie.getName(), "Romantic", rating.getRating());
+  }
+
+  @HystrixCommand(fallbackMethod = "getFallbackUserRating")
+  private UserRating getUserRating(String userId) {
     UserRating userRating = restTemplate.getForObject("http://ratings-data-service/ratings/users/" + userId, UserRating.class);
-    return userRating.getRatings().stream().map(rating -> {
-      // this call is synchronous. wait until the rest template gives the output
-      Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
-      assert movie != null;
-      return new CatalogItem(movie.getName(), "Romantic", rating.getRating());
-    }).collect(toList());
+    return userRating;
   }
 
   @RequestMapping("/v2/{userId}")
@@ -62,5 +71,17 @@ public class MovieCatalogResource
   public List<CatalogItem> getFallbackCatalog(@PathVariable("userId") String userId)
   {
     return singletonList(new CatalogItem("No movie", "", 0));
+  }
+
+  private CatalogItem getFallbackCatalogItem(Rating rating)
+  {
+    return new CatalogItem("Movie not found", "", 0);
+  }
+
+  private UserRating getFallbackUserRating(String userId)
+  {
+    UserRating userRating = new UserRating();
+    userRating.setRatings(singletonList(new Rating("", 0)));
+    return userRating;
   }
 }
