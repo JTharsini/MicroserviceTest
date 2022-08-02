@@ -263,4 +263,20 @@ Hysterix wraps your class in a proxy class. proxy class contains circuit breaker
 -With separate @HysterixCommand fallback which sits inside the class itself, not get executed due to proxy class. It's a wrapper for the instance of an API class.
 No way to tell to call fallback. If external class calls it will do
 Solution: put method which uses fallback and the fallback in a class
+-Hysterix allows data to display regarding resiliency in Dashboard. Can be configured as external application in Production or within application for education purpose.
+-To achieve that, add dependencies
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+			<version>2.2.10.RELEASE</version>
+		</dependency>
+		        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+	add annotation @EnableHystrixDashboard
+	add management.endpoints.web.exposure.include=hystrix.stream to application.properties
+-spring-boot-starter-actuator : to know how microservices are running
+-Now http://localhost:8081/hystrix is showing Hysterix dashboard
+-Enter http://localhost:8081/actuator/hystrix.stream in url and monitor with request
 
