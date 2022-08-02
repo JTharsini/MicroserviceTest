@@ -1,5 +1,6 @@
 package io.javabrains.moviecatalogservice.resources;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.javabrains.moviecatalogservice.models.CatalogItem;
 import io.javabrains.moviecatalogservice.models.Movie;
 import io.javabrains.moviecatalogservice.models.UserRating;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -24,6 +27,7 @@ public class MovieCatalogResource
   private WebClient.Builder builder;
 
   @RequestMapping("/{userId}")
+  @HystrixCommand(fallbackMethod = "getFallbackCatalog")
   public List<CatalogItem> getCatalog(@PathVariable("userId") String userId)
   {
     UserRating userRating = restTemplate.getForObject("http://ratings-data-service/ratings/users/" + userId, UserRating.class);
@@ -52,5 +56,11 @@ public class MovieCatalogResource
       assert movie != null;
       return new CatalogItem(movie.getName(), "Romantic", r.getRating());
     }).collect(toList());
+  }
+
+  //same signature as getCatalog method
+  public List<CatalogItem> getFallbackCatalog(@PathVariable("userId") String userId)
+  {
+    return singletonList(new CatalogItem("No movie", "", 0));
   }
 }

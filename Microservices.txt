@@ -216,5 +216,43 @@ Solution:
 -movie-catalog-service can be smart and rather sending request movie-info-service while it's slow, act smarter:
 see who is slow, hold request for a while without sending
 ==> circuit breaker pattern (drip switch when a fault, after sorted manual or auto on)
-Technically can be applied to a service which calls another service
- 
+Technically it can't be applied to a service which calls only one service. There should be a service which calls at least two services. In that case, when one service is being
+slow affects other service which could have been faster. In our case it's movie-catalog-service
+-When a service gives one timeout doesn't mean it should not send requests anymore. At which point it should decide the service it's requested for is not good enough
+At any point of time, last three requests timeout going to break this circuit. Then it will not be able to catch one success, then failure, one success, then failure.
+That means the way to make it fail should be good enough to accomodate many cases.
+-Circuit breaker parameters:
+	1. When does the circuit drip?
+		Last n requests to consider for the decision
+		How many of those should fail?
+		Timeout duration (when a request goes beyond this time, it will be marked as failure)
+	2. When does the circuit becomes back to normal?
+		How long after a circuit drip to try again? (sleep window)
+-To decide these parameters, request rate and threads webserver can handle are needed
+-When it detects a problem, it needs to stop sending request & it needs a fallback mechanism
+-Fallback options:
+	1. throw an error - not good
+	2. return a fallback "default" response - better than first
+	3. save previous responses (cache) and use that when possible - best
+-Why circuit breakers?
+	1. failing fast
+	2. fallback functionality
+	3. automatic recovery
+-To do all these things, we need through knowledge in concurrency. But there is framework to 
+do this : Hysterix
+-How to identify the available thread pool size? In webserver configuration file
+-Determine parameters: try and try or literature review or performance test
+-throwing error: need to handle => headache
+-caching response will not be used for machine critical application - banking application
+-Hysterix : by Netflix
+	1. Implements circuit breaker pattern
+	2. Give the configuration parameters
+	3. Work well with spring boot
+-Since parameters changes, need an adaptive system. still Hysterix is good
+-Adding Hysterix support:
+	-Add the Maven spring-cloud-starter-netflix-hystrix dependency
+	-Add @EnableCircuitBreaker annotation to the application class
+	-Add @HysterixCommand annotation to methods that need circuit breaker
+	-Configure Hysterix behavior (parameters)
+
+
