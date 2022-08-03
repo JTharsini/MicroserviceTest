@@ -13,8 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 @EnableEurekaClient
-@EnableCircuitBreaker
 @EnableHystrixDashboard
+@EnableCircuitBreaker
 public class MovieCatalogServiceApplication
 {
   @Bean

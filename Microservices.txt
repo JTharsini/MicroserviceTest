@@ -275,7 +275,8 @@ Solution: put method which uses fallback and the fallback in a class
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 	add annotation @EnableHystrixDashboard
-	add management.endpoints.web.exposure.include=hystrix.stream to application.properties
+	add management.endpoints.web.exposure.include=hystrix.stream and hystrix.dashboard.proxyStreamAllowList=* to application.properties
+	@HystrixCommand annotation should be added to controller method
 -spring-boot-starter-actuator : to know how microservices are running
 -Now http://localhost:8081/hystrix is showing Hysterix dashboard
 -Enter http://localhost:8081/actuator/hystrix.stream in url and monitor with request
