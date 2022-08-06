@@ -305,3 +305,23 @@ Those keyrooms should be watertight even if water entered it will not affect oth
 -coreSize : how many concurrent thread allowed for that bulkhead. I don't want to have more than 20 threads waiting for this API. But they can be queued
 -maxQueueSize: how many requests can be queued before they get access to the threadpool
 -If it beyonds then fallback method will be invoked
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Why do we care about microservice configuration?
+-Configuration is essential for any application
+-Should be separated from code
+-Eg: Database connection information
+Don't hardcode ==> can change those values without changing the code and no need to redeploy
+-Example configurations:
+	1. DB connections
+	2. Credentials: file share/S3 bucket
+	3. Feature flags - Turn on a feature for a subset of users or Turn on a feature for a particular time period
+	4. Business logic configuration parameters (discount)
+	5. Scenario testing - refactored code allowed to 10% and increased step by step
+	6. SpringBoot application
+-Earlier configurations are done though XML file. Now properties files, YAML files, JSON files since they are less verbose
+-Why separating configurations are important in case of Microservices? multiple microservices and multiple copies
+-Configurations should be externalized, environment specific, consistent (all copies should have same values) version history, real-time management (changing configuration
+values while microservices are running)
+- application.properties: key-value pair
+it's not externalized. property file is inside the jar
