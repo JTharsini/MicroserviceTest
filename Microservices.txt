@@ -280,4 +280,28 @@ Solution: put method which uses fallback and the fallback in a class
 -spring-boot-starter-actuator : to know how microservices are running
 -Now http://localhost:8081/hystrix is showing Hysterix dashboard
 -Enter http://localhost:8081/actuator/hystrix.stream in url and monitor with request
-
+-Handling outages: Bulkhead pattern
+fault tolerance: create more instances, intelligent circuit breakers, Bulkhead pattern
+Bulkhead pattern: regarding ship building: when things goes wrong, critical for lives
+If holes => it will sink. To avoid cascading failures, in ships Bulkheads. Cabins in the ships close
+to the stern of the ship ==> They are at the bottom ==> Susceptible to a hole
+Those keyrooms should be watertight even if water entered it will not affect other places
+-One service may make another service down
+-Idea is having separate thread pools for separate services
+-Specify threadpool names inside @HysterixCommand
+-Thread pool size, Queue size (when not consumed, upto which number they can be queued)
+	@HystrixCommand(fallbackMethod = "getFallbackUserRating",
+			threadPoolKey = "userRatingPool",
+			threadPoolProperties = {
+					@HystrixProperty(name = "coreSize", value = "20"),
+					@HystrixProperty(name = "maxQueueSize", value = "10")
+			}
+    public UserRating getUserRating(String userId) {
+        UserRating userRating = restTemplate.getForObject("http://ratings-data-service/ratings/users/" + userId, UserRating.class);
+        return userRating;
+    }
+-Creating separate threadPoolKey: create separate bulkhead
+-using threadPoolKey : can be shared among multiple methods or can avoid sharing by the service we don't want to
+-coreSize : how many concurrent thread allowed for that bulkhead. I don't want to have more than 20 threads waiting for this API. But they can be queued
+-maxQueueSize: how many requests can be queued before they get access to the threadpool
+-If it beyonds then fallback method will be invoked
