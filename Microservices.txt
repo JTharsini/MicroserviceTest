@@ -357,4 +357,9 @@ private int dummyPort;
 error in startup: good
 -When single message, single list: good to use @Value annotation
 -when group of configuration or to be used in multiple places : @ConfigurationProperties
+-actuator shows all the user specified or spring provided configuration
+-actuator exposes sensitive information. need to tell it's okay to do that: by adding management.endpoints.web.exposure.include=* in application.properties
+In production : no
+-http://localhost:8080/actuator/configprops gives all the configuration properties
+-can override any configuration values from that in application.properties
 -
