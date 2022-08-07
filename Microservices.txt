@@ -325,3 +325,25 @@ Don't hardcode ==> can change those values without changing the code and no need
 values while microservices are running)
 - application.properties: key-value pair
 it's not externalized. property file is inside the jar
+-generate jar: by maven install
+-create application.properties in the jar location
+-copy properties in application.properties
+-now application will take properties from the external file
+-java -jar .\spring-boot-config-0.0.1-SNAPSHOT.jar --my.greeting="Miyaav" : this will override external properties file
+-System property also can be accessed by @Value annotation
+-    @Value("some static message")
+    private String staticMessage;
+-When property key is not available, it won't start application (Injection of autowired dependency failed)
+-    @Value("${my.val:JJDefault}")
+    private String defaultValue;
+When property key is not available, it will pick the default value
+-Comma separated values will be considered as list
+-
+@Value("${my.list}")
+private List<String> numbers;
+-dbValues={connectionString: 'http://____', userName: 'foo', password: 'pass'}
+    @Value("#{${dbValues}}")
+    private Map<String, String> dbValues;
+regular expression: # treats the value in {} as Spring Expression language evaluation (SpEL)
+can call other properties of beans using this
+-
