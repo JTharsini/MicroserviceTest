@@ -1,0 +1,14 @@
+app:
+  name: My app from YAML
+  description: Welcome to ${app.name}
+
+my:
+  list: one,two,three
+  greeting: Hello JJ from YAML
+
+db:
+  connection: "{connectionString: 'http://____', userName: 'foo', password: 'pass'}"
+  host: 127.0.0.1
+  port: 1200
+#db.dummyPort:Foo
+management.endpoints.web.exposure.include: "*"

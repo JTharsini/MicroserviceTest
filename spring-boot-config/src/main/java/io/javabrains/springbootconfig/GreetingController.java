@@ -22,7 +22,7 @@ public class GreetingController {
     @Value("${my.list}")
     private List<String> numbers;
 
-    @Value("#{${dbValues}}")
+    @Value("#{${db.connection}}")
     private Map<String, String> dbValues;
 
     @Autowired

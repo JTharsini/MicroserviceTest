@@ -362,4 +362,9 @@ error in startup: good
 In production : no
 -http://localhost:8080/actuator/configprops gives all the configuration properties
 -can override any configuration values from that in application.properties
--
+-when more prefix and properties ==> more verbose in application.properties ==> yaml file configuration came
+-YAML => YAML ain't Markup Language
+-properties file to yaml file: replace "=" with ": "
+non-keywords can be differentiated as number or text
+others should be explicitly marked with double quoted to consider them as string
+true benefit of YAML is its nesting structure
