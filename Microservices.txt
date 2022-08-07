@@ -346,4 +346,15 @@ private List<String> numbers;
     private Map<String, String> dbValues;
 regular expression: # treats the value in {} as Spring Expression language evaluation (SpEL)
 can call other properties of beans using this
+-@ConfigurationProperties : to pull up properties from properties file and use it as group
+-Rather annotating each values one by one, can create a bean an pull all values at once
+-@ConfigurationProperties("db")
+pick key starts with db. and match field with remaining part of the key
+db.host=127.0.0.1
+private String host;
+-db.dummyPort=Foo
+private int dummyPort;
+error in startup: good
+-When single message, single list: good to use @Value annotation
+-when group of configuration or to be used in multiple places : @ConfigurationProperties
 -
