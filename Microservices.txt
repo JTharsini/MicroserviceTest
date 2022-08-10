@@ -382,3 +382,17 @@ of profiles ==> no need to copy every properties. majority of properties in defa
 -In cmd, can change active profile while it's running: java -jar .\spring-boot-config-0.0.1-SNAPSHOT.jar --spring.profiles.active=default
 ==> environment based configurations are sitting into the jar. need to choose needed at runtime
 -Selecting bean by profile:
+-
+@Repository
+@Profile("production")
+public class DataSourceBean{
+}
+
+@Repository
+@Profile("dev")
+public class LocalDataSourceBean{
+}
+: DataSourceBean only in production, LocalDataSourceBean only in dev
+can use @Profile annotation
+-If we don't set @Profile, "default" profile will be used
+-
