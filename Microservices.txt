@@ -368,3 +368,17 @@ In production : no
 non-keywords can be differentiated as number or text
 others should be explicitly marked with double quoted to consider them as string
 true benefit of YAML is its nesting structure
+-Different configuration for different environments: by Spring profiles
+-Having different properties files for different environments is valid. But,
+	-outside source code control
+	-manual management across environments
+-Spring profiles solve this
+-profile name naming convention: application-<profileName>.extn
+application-test.yml => new profile "test" created
+Add spring.profiles.active: test to default profile file to activate the new profile
+-default profile is always active. even though it's being asked to check another profile, default profile is still active
+-in default profile : test - active, in test profile - production is active => now production profile overwrites if same key value is in production. otherwise, it will be combination
+of profiles ==> no need to copy every properties. majority of properties in default profile. Changing properties in relavant profiles
+-In cmd, can change active profile while it's running: java -jar .\spring-boot-config-0.0.1-SNAPSHOT.jar --spring.profiles.active=default
+==> environment based configurations are sitting into the jar. need to choose needed at runtime
+-Selecting bean by profile:

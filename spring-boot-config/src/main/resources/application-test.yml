@@ -7,10 +7,8 @@ my:
   greeting: Hello JJ from YAML
 
 db:
-  connection: "{connectionString: 'http://____', userName: 'foo', password: 'pass'}"
+  connection: "{testConnectionString: 'http://____', userName: 'foo', password: 'pass'}"
   host: 127.0.0.1
   port: 1200
 #db.dummyPort:Foo
 management.endpoints.web.exposure.include: "*"
-
-spring.profiles.active: test
