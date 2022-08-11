@@ -402,4 +402,27 @@ If environment is this do this, If environment is that do that. No way to test t
 -Using this properties also should not be checked
 Because @Value should be used. Value should be injected. not looked up
 easy to test & initial make sure before deployment
+-We need to configure multiple microservices ==> complexity increases
+-To achieve consistency, need spring config server.
+because I have a jar with properties deployed in 2 microservices.
+Someone modified some properties.
+My 2 microservices jars are outdated now ==> no consistency
+=> separate configuration service to maintain consistency ==> config as separate microservice
+**************
+solutions:
+-Apache Zookeeper - centralized configuration server, provides distributed Synchronization,
+			-provides naming services
+-ETCD - distributed key-value store
+-Hashicorp Consul
+-Spring Cloud Configuration Server
+***************
+Where to put config?
+-Db
+-Sourcecode - need to re-deploy: no need to rebuild for configuration
+-Spring Cloud Configuration Server: central server every microservices talk to.
+It connects to different datasource. One is popular. 
+popular version control store: Git repo
+Not from db, from Git repo online.
+Modify configuration & push to git repo.
+Spring cloud configuration server pulls changes & apply new configuration
 -
