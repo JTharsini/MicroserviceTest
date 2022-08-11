@@ -444,3 +444,30 @@ can be referred this local repo by URI.
 8888: commonly used port for spring cloud configuration by convention
 -spring cloud configuration url : http://localhost:8888/<file-name>/<profile> : file-name without extension
 -http://localhost:8888/application/default will give configurations read from git repo
+-Modify application.yml in config-repo. and commit. Now refresh the URL. modification appears there
+-Now spring cloud configuration server can pull configuration from git repo
+-other microservices needed to pull configuration from spring cloud configuration server
+-to do that need to add spring cloud configuration client as dependency
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+Add dependency management since it's a cloud dependency:
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+<properties>
+	<spring-cloud.version>2021.0.3</spring-cloud.version>
+</properties>
+-need to specify config server url in application.properties of configuration client
+spring.config.import: configserver:http://localhost:8888
+-spring.cloud.config.server.git.default-label=master in config-server
+to point master branch
