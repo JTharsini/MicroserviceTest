@@ -475,4 +475,11 @@ to point master branch
 -Now http://localhost:8080/greet will give
 Hello World from config server:some static message:JJDefault:[one, two, three]:{connectionString=http://____, userName=foo2, password=pass}
 Hello World from config server is from config server file
--
+-How to enable config server to return a value for a microservice and another value for another microservice: configuration depending on microservice
+D:\Tharsini\MicroserviceTest\config-repo\application.yml
+now only this file. means global configuration
+create another file with <service name>.yml
+Then when only microservice with particular name is requesting config server will return values from that
+give name to microservice in application.yml:
+	spring.application.name: spring-boot-config
+Whenever changes in repo files, it should be committed to be pulled by configuration server
