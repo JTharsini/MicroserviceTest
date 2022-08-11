@@ -482,4 +482,24 @@ create another file with <service name>.yml
 Then when only microservice with particular name is requesting config server will return values from that
 give name to microservice in application.yml:
 	spring.application.name: spring-boot-config
+-refreshing configuration at runtime without redeploy: without this property files are read when application is started
+: by enabling refresh
+without modifying applications, just modifying properties file
 Whenever changes in repo files, it should be committed to be pulled by configuration server
+-without restarting server, server pulls the updated value. client doesn't. doing that consumes resources
+but server is there for that purpose. then it's being up-to-dated
+-client should have
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+actuator allows bunch of endpoints.
+in this case it provides an endpoint to be invoked to reload the config.
+Mark components to be refreshed: by @RefreshScope annotation: just like refreshing normal beans (@Value is also dependency injection)
+All the dependencies should be refreshed under @RefreshScope annotation
+-http://localhost:8080/actuator/refresh POST endpoint will be enabled
+why post? Not idempotent request and some changes by this
+-This request return modified properties
+To pull the value from file in real-time, need to execute http://localhost:8080/actuator/refresh POSt first and then resend the intended API
+http://localhost:8080/actuator/refresh will refresh the updated values
+-There are many ways for configuration: When to use what is best : best practices

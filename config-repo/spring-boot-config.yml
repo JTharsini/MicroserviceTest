@@ -1,7 +1,7 @@
 my:
   list: 
     values: one,two,three
-  greeting: Hello World from config server spring boot config - microservice specific config file
+  greeting: Hello World from config server spring boot config - microservice specific config file modified newly
 
 db:
   connection: "{connectionString: 'http://____', userName: 'foo2', password: 'pass'}"
