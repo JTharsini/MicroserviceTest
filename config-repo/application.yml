@@ -1,0 +1,9 @@
+my:
+  list: 
+    values: one,two,three
+  greeting: Hello World from config server
+
+db:
+  connection: "{connectionString: 'http://____', userName: 'foo', password: 'pass'}"
+  host: 127.0.0.1
+  port: 1200

@@ -426,3 +426,18 @@ Not from db, from Git repo online.
 Modify configuration & push to git repo.
 Spring cloud configuration server pulls changes & apply new configuration
 -new SpringBoot application with Config server dependency: for Spring cloud configuration server
+-add @EnableConfigServer annotation to main application
+-In application.properties file add property: spring.cloud.config.server.git.uri
+Example for local repo URI:
+spring.cloud.config.server.git.uri=D:\Tharsini\MicroserviceTest\config-repo
+
+value can be local repo or online repo
+-create a local config repo:
+create a folder: config-repo
+add application.yml
+add properties
+git init
+git add .
+git commit -m "Adding config yml file"
+Now it's committed to local repo.
+can be referred this local repo by URI.
