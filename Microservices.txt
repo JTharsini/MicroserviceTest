@@ -425,4 +425,4 @@ popular version control store: Git repo
 Not from db, from Git repo online.
 Modify configuration & push to git repo.
 Spring cloud configuration server pulls changes & apply new configuration
--
+-new SpringBoot application with Config server dependency: for Spring cloud configuration server
