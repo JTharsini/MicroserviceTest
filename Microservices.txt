@@ -503,3 +503,34 @@ why post? Not idempotent request and some changes by this
 To pull the value from file in real-time, need to execute http://localhost:8080/actuator/refresh POSt first and then resend the intended API
 http://localhost:8080/actuator/refresh will refresh the updated values
 -There are many ways for configuration: When to use what is best : best practices
+1. Specificity: Microservice specific
+	Changing:  No
+	==> Property files
+2. Specificity: Microservice specific
+	Changing:  Yes
+	==> Config server
+3. Specificity: Microservice specific
+	Type:  Environment config (AWS, Azure, Heroku)
+	==> System variable with alias (Path variable)
+spring.cloud.config.server.git.uri: system property : okay to use this way. On the otherhand,
+	host.environment.port: 8080
+	env.port: ${host.environment.port}
+	server.port: ${env.port}
+This references are reused as alias. Better to define them as system variable
+If need to move from provider to provider, need to change only in system variable
+all the other things will be implied
+-----
+Security in SpringBoot: eg: securing repo (not the way)
+Spring cloud should be configured with Spring security
+Use encryption for secure configuration: credentials, connectionString, api keys are encrypted
+In application.yml
+password: '{cipher}GUOJLNKK'
+Use Spring cloud config server to encrypt value and save it in repo
+When using Spring cloud config server will detect it's encrypted. Then decrypt the value and use it
+It works with Java Cryptography Extension (JCE)
+This extension is responsible for encryption and decryption
+-Use defaults for local development
+config.uri=http://localhost:${config.port} is not good
+config.uri=http://localhost:${config.port:8888} : default value is 8888
+-https://12factor.net/ to refer good example for microservice
+
