@@ -395,4 +395,11 @@ public class LocalDataSourceBean{
 : DataSourceBean only in production, LocalDataSourceBean only in dev
 can use @Profile annotation
 -If we don't set @Profile, "default" profile will be used
+-@Value annotation : injecting values. not looking up. To lookup values, using environment object
+-Environment is an object having active values of environment (profiles & properties)
+-Using this profiles should not be looked up: it affects testability
+If environment is this do this, If environment is that do that. No way to test that
+-Using this properties also should not be checked
+Because @Value should be used. Value should be injected. not looked up
+easy to test & initial make sure before deployment
 -
