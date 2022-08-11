@@ -441,3 +441,6 @@ git add .
 git commit -m "Adding config yml file"
 Now it's committed to local repo.
 can be referred this local repo by URI.
+8888: commonly used port for spring cloud configuration by convention
+-spring cloud configuration url : http://localhost:8888/<file-name>/<profile> : file-name without extension
+-http://localhost:8888/application/default will give configurations read from git repo
