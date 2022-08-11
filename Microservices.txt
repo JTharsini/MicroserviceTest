@@ -468,6 +468,11 @@ Add dependency management since it's a cloud dependency:
 	<spring-cloud.version>2021.0.3</spring-cloud.version>
 </properties>
 -need to specify config server url in application.properties of configuration client
-spring.config.import: configserver:http://localhost:8888
+spring.config.import: "configserver:"
+spring.cloud.config.uri: http://localhost:8888
 -spring.cloud.config.server.git.default-label=master in config-server
 to point master branch
+-Now http://localhost:8080/greet will give
+Hello World from config server:some static message:JJDefault:[one, two, three]:{connectionString=http://____, userName=foo2, password=pass}
+Hello World from config server is from config server file
+-
